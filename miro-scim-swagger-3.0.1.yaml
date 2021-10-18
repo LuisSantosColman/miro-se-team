@@ -1,0 +1,1357 @@
+openapi: 3.0.1
+info:
+  title: Miro SCIM API
+  description: SCIM V1 API implemented by Miro
+  version: '0.1'
+servers:
+  - url: https://miro.com/api/v1/scim
+paths:
+  /Users:
+    get:
+      tags:
+      - user
+      description: 'Retrieves the list of users in your organization. <br><b>Note</b>: Users with role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" are not retrieved in this request'
+      parameters:
+        - name: attributes
+          in: query
+          required: false
+          description: A comma-separated list of attribute names to return in the response. Example attributes=id,displayName
+          schema:
+            type: string
+        - name: filter
+          in: query
+          required: false
+          description: 'You can request a subset of resources by specifying the filter query parameter containing a filter expression. Attribute names and attribute operators used in filters are case insensitive. The filter parameter must contain at least one valid expression. Each expression must contain an attribute name followed by an attribute operator and an optional value. <br>eq = equal<br> ne = not equal<br> co = contains<br> sw = starts with<br> ew = ends with<br> pr = preset (has value)<br> gt = greater than<br> ge = greater than or equal to<br> lt = less than<br> le = less than or equal to<br> and = Logical "and"<br> or = Logical "or"<br> not = "Not" function<br> () = Precedence grouping <br>The value must be passed within parenthesis. <br>Example: filter=(userName eq "user@miro.com")'
+          schema:
+            type: string
+        - name: startIndex
+          in: query
+          required: false
+          description: start index (1-based). Example startIndex=1
+          schema:
+            type: integer
+        - name: count
+          in: query
+          required: false
+          description: specifies the desired maximum number of query results per page. Example count=12
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          required: false
+          description: specifies the attribute whose value will be used to order the response. Example sortBy=userName
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          required: false
+          description: defines the order in which the 'sortBy' parameter is applied. Allowed values are 'ascending' and 'descending'. Example sortOrder=ascending
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+        400:
+          description: Bad Request
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+    post:
+      tags:
+      - user
+      description: 'Creates a new user. Payload must include the "userName" attribute populated with an email address, "familyName", and "givenName" or a "displayName" attribute. If "displayName" is not populated, a combination of "givenName" and "familyName" is used'
+      requestBody:
+        description: 'Payload must include the "userName" attribute populated with an email address, "familyName", and "givenName" or a "displayName" attribute. If "displayName" is not populated, a combination of "givenName" and "familyName" is used'
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/CreateUserResource'
+        required: true
+      responses:
+        201:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+        400:
+          description: Bad Request
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        413:
+          description: Payload has more than 8000 members or is bigger than 800000 bytes
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+  /Users/{id}:
+    get:
+      tags:
+      - user
+      description: 'Retrieves a single user resource. <br><b>Note</b>: Users with role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" are not retrieved in this request and the API will return a 404 error for those users'
+      parameters:
+        - name: id
+          in: path
+          description: User Id
+          required: true
+          schema:
+            type: string
+        - name: attributes
+          in: query
+          required: false
+          description: A comma-separated list of attribute names to return in the response. Example attributes=userName
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        400:
+          description: Bad Request
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+    put:
+      tags:
+      - user
+      description: 'Updates an existing user resource. It is the easiest way to replace the user information'
+      parameters:
+        - name: id
+          in: path
+          description: User Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Payload to update user information'
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/UserResource'
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        400:
+          description: Bad Request
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        409:
+          description: Any account in organization must have at least one admin
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+    patch:
+      tags:
+      - user
+      description: 'Updates an existing user resource, overwriting values for specified attributes. Attributes that are not provided will remain unchanged. PATCH only updates the fields provided'
+      parameters:
+        - name: id
+          in: path
+          description: User Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Payload to update user information. <br><br>The body of a PATCH request must contain the attribute "Operations", whose value is an array of one or more PATCH operations. Each PATCH operation object must have exactly one "op" member<br><br>Users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" cannot be updated, in such case the API returns a 404 error code'
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/PatchUserResource'
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        400:
+          description: Bad Request
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        409:
+          description: Any account in organization must have at least one admin
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+    delete:
+      tags:
+      - user
+      description: 'Deletes a single user from the organization.<br><br>A user who is the last admin in the team or the last admin in the organization cannot be deleted. If you try to delete such user, the API returns a 409 error code.<br><br>Users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" cannot be deleted, in suh case the API returns a 404 error code<br><br>All user boards that used to be owned by the deleted user get assigned to first team admin or first company admin from the organization.<br><br>The response body is empty'
+      parameters:
+        - name: id
+          in: path
+          description: User Id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Successful Operation - No content
+        400:
+          description: Bad Request
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        409:
+          description: Any account in organization must have at least one admin
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+  /Groups:
+    get:
+      tags:
+      - group
+      description: 'Retrieves a list of groups (teams).<br><b>Note</b>: Users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" are not retrieved for any account'
+      parameters:
+        - name: attributes
+          in: query
+          required: false
+          description: A comma-separated list of attribute names to return in the response. Example attributes=id,displayName
+          schema:
+            type: string
+        - name: filter
+          in: query
+          required: false
+          description: 'You can request a subset of resources by specifying the filter query parameter containing a filter expression. Attribute names and attribute operators used in filters are case insensitive. The filter parameter must contain at least one valid expression. Each expression must contain an attribute name followed by an attribute operator and an optional value. <br>eq = equal<br> ne = not equal<br> co = contains<br> sw = starts with<br> ew = ends with<br> pr = preset (has value)<br> gt = greater than<br> ge = greater than or equal to<br> lt = less than<br> le = less than or equal to<br> and = Logical "and"<br> or = Logical "or"<br> not = "Not" function<br> () = Precedence grouping <br>The value must be passed within parenthesis. <br>Example: filter=(displayName eq "Product Team")'
+          schema:
+            type: string
+        - name: startIndex
+          in: query
+          required: false
+          description: start index (1-based). Example startIndex=1
+          schema:
+            type: integer
+        - name: count
+          in: query
+          required: false
+          description: specifies the desired maximum number of query results per page. Example count=12
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          required: false
+          description: specifies the attribute whose value will be used to order the response. Example sortBy=displayName
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          required: false
+          description: defines the order in which the 'sortBy' parameter is applied. Allowed values are 'ascending' and 'descending'. Example sortOrder=ascending
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/GroupListResponse'
+        400:
+          description: Bad Request
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+  /Groups/{id}:
+    get:
+      tags:
+      - group
+      description: 'Retrieves a single Group resource. <br><b>Note</b>: Users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" are not retrieved for any account'
+      parameters:
+        - name: id
+          in: path
+          description: Group (Team) Id
+          required: true
+          schema:
+            type: string
+        - name: attributes
+          in: query
+          required: false
+          description: A comma-separated list of attribute names to return in the response. Example attributes=displayName
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/GroupResource'
+        400:
+          description: Bad Request
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        409:
+          description: The Group must have at least one team admin
+        413:
+          description: Respose contains more than 8000 groups or is bigger than 800000 bytes
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+    patch:
+      tags:
+      - group
+      description: 'Updates an existing group resource, overwriting values for specified attributes. Attributes that are not provided will remain unchanged. PATCH only updates the fields provided. <br><br>The body of a PATCH request must contain the attribute "Operations", whose value is an array of one or more PATCH operations. Each PATCH operation object must have exactly one "op" member. To update a user resource, use the "replace" operation. <br><br>The "path" attribute value is a string containing an attribute path describing the target of the operation. The "path" attribute is optional for the "add" and "replace" operations and is required for the "remove" operation.<br><br><b>Note</b>: replacing the "displayName" of a group will only update the "security group" name and not the actual name of the group/team that is visible in the Miro User Interface. More information regarding this specific operation is available at: https://developers.miro.com/docs/scim-groups#decoupling-groups-and-teams<br><br>For "remove" or "replace" operations, the team member is removed from the team and from all team boards. If the user is not registered fully in Miro and is not assigned to any other team, the user is also removed from the organization<br><br>All added team members are reactivated or recreated if they were deactivated or deleted earlier.<br><br>When adding existing users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" to a team, Miro sets "FULL" license and "ORGANIZATION_INTERNAL_USER" roles.'
+      parameters:
+        - name: id
+          in: path
+          description: Group (Team) Id
+          required: true
+          schema:
+            type: string
+        - name: attributes
+          in: query
+          required: false
+          description: A comma-separated list of attribute names to return in the response. Example attributes=displayName
+          schema:
+            type: string
+      requestBody:
+        description: 'Payload to add/replace/remove data in the specified group/team<br><br>The body of a PATCH request must contain the attribute "Operations", whose value is an array of one or more PATCH operations. Each PATCH operation object must have exactly one "op" member. To update a user resource, use the "replace" operation.<br><br>The "path" attribute value is a string containing an attribute path describing the target of the operation. The "path" attribute is optional for the "add" and "replace" operations and is required for the "remove" operation.'
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/PatchGroupResource'
+            example:
+              schemas: ['urn:ietf:params:scim:api:messages:2.0:PatchOp']
+              Operations: 
+                - op: Add
+                  path: members
+                  value:
+                    - value: '3074457365265951581'
+                    - value: '3074457365266570558'
+                - op: Remove
+                  path: 'members[value eq 3074457364022187294]'
+                - op: Replace
+                  path: displayName
+                  value: design_unit2_product
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/GroupResource'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        413:
+          description: Payload has more than 8000 members or is bigger than 800000 bytes
+        429:
+          description: 'Too many requests <br>(See rate limits at https://developers.miro.com/docs/scim-rate-limits)'
+        500:
+          description: Internal Server Error
+  /ServiceProviderConfig:
+    get:
+      tags:
+      - discovery
+      description: returns supported operations and SCIM API basic configuration
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ServiceProviderConfigResponse'
+        400:
+          description: Bad Request
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        500:
+          description: Internal Server Error
+  /ResourceTypes:
+    get:
+      tags:
+      - discovery
+      description: returns information about which resources are supported. Currently, Miro supports Users and Groups
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ResourceTypeListResponse'
+        400:
+          description: Bad Request
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        500:
+          description: Internal Server Error
+  /ResourceTypes/{resource}:
+    get:
+      tags:
+      - discovery
+      description: returns metadata for the available resource types (User and Group)
+      parameters:
+      - name: resource
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - User
+          - Group
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/ResourceType'
+        400:
+          description: Bad Request
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        500:
+          description: Internal Server Error
+  /Schemas:
+    get:
+      tags:
+      - discovery
+      description: returns metadata about Users, Groups and extension attributes that are currently supported
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/SchemaListResponse'
+        400:
+          description: Bad Request
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        500:
+          description: Internal Server Error
+  /Schemas/{uri}:
+    get:
+      tags:
+      - discovery
+      description: returns information on how users, groups, and enterprise-user attributes are formatted
+      parameters:
+      - name: uri
+        in: path
+        description: Schema URI of a particular resource type
+        required: true
+        schema:
+          type: string
+          enum:
+          - urn:ietf:params:scim:schemas:core:2.0:User
+          - urn:ietf:params:scim:schemas:core:2.0:Group
+          - urn:ietf:params:scim:schemas:extension:enterprise:2.0:User
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/scim+json:
+              schema:
+                $ref: '#/components/schemas/SchemaResource'
+        400:
+          description: Bad Request
+        401:
+          description: Authorization failed
+        403:
+          description: SCIM disabled for this organization
+        404:
+          description: Not Found
+        500:
+          description: Internal Server Error
+components: 
+  schemas:
+    PatchUserResource: 
+      type: object
+      required:
+        - schemas
+        - Operations
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:api:messages:2.0:PatchOp
+        Operations: 
+          type: array
+          items: 
+            type: object
+            required:
+              - op
+              - path
+              - value
+            properties: 
+              op: 
+                type: string
+                enum:
+                  - Replace
+                example: Replace
+              path: 
+                type: string
+                example: userType
+              value: 
+                type: string
+                example: Full
+    CreateUserResponse: 
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:schemas:core:2.0:User
+        id: 
+          type: string
+          example: '3074457365860294626'
+        meta: 
+          type: object
+          properties: 
+            resourceType: 
+              type: string
+              example: User
+            location: 
+              type: string
+              example: http://api-aella:9111/api/v1/scim/Users/3074457365860294626
+        userName: 
+          type: string
+          example: test7@miro.com
+        name: 
+          type: object
+          properties: 
+            familyName: 
+              type: string
+              example: Taylor
+            givenName: 
+              type: string
+              example: Adam
+        displayName: 
+          type: string
+          example: Adam Taylor
+        userType: 
+          type: string
+          example: Free
+        active: 
+          type: boolean
+        emails: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              value: 
+                type: string
+                example: test7@miro.com
+              display: 
+                type: string
+                example: test7@miro.com
+              primary: 
+                type: boolean
+        photos: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              type: 
+                type: string
+                example: photo
+        roles: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              value: 
+                type: string
+                example: ORGANIZATION_INTERNAL_USER
+              display: 
+                type: string
+                example: Member
+              type: 
+                type: string
+                example: organization_user_role
+              primary: 
+                type: boolean
+                example: true
+    CreateUserResource:
+      type: object
+      required:
+        - schemas
+        - userName
+        - name
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:schemas:core:2.0:User
+        userName: 
+          type: string
+          example: test@miro.com
+        name: 
+          type: object
+          required:
+            - familyName
+            - givenName
+          properties: 
+            familyName: 
+              type: string
+              example: Doe
+            givenName: 
+              type: string
+              example: John
+        displayName: 
+          type: string
+          example: John Doe
+    UserResource:
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:schemas:core:2.0:User
+        id: 
+          type: string
+          example: '3074457365265951581'
+        meta: 
+          type: object
+          properties: 
+            resourceType: 
+              type: string
+              example: User
+            location: 
+              type: string
+              example: http://api-hailey:9111/api/v1/scim/Users/3074457365265951581
+        userName: 
+          type: string
+          example: user@miro.com
+        name: 
+          type: object
+          properties: 
+            familyName: 
+              type: string
+              example: Doe
+            givenName: 
+              type: string
+              example: John
+        displayName: 
+          type: string
+          example: John Doe
+        userType: 
+          type: string
+          example: Full
+        active: 
+          type: boolean
+        emails: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              value: 
+                type: string
+                example: user@miro.com
+              display: 
+                type: string
+                example: user@miro.com
+              primary: 
+                type: boolean
+        photos: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              type: 
+                type: string
+                example: photo
+        groups: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              value: 
+                type: string
+                example: '3074457365266112911'
+              display: 
+                type: string
+                example: Product
+        roles: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              value: 
+                type: string
+                example: ORGANIZATION_INTERNAL_USER
+              display: 
+                type: string
+                example: Member
+              type: 
+                type: string
+                example: organization_user_role
+              primary: 
+                type: boolean
+        urn:ietf:params:scim:schemas:extension:enterprise:2.0:User: 
+          type: object
+          properties: 
+            employeeNumber: 
+              type: string
+              example: 701984
+            costCenter: 
+              type: string
+              example: 4130
+            organization: 
+              type: string
+              example: Miro Inc.
+            division: 
+              type: string
+              example: Product
+            department: 
+              type: string
+              example: Security
+    UserListResponse:
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:api:messages:2.0:ListResponse
+        totalResults: 
+          type: number
+          example: 11
+        Resources: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              schemas: 
+                type: array
+                items: 
+                  type: string
+                  example: urn:ietf:params:scim:schemas:core:2.0:User
+              id: 
+                type: string
+                example: '3074457364371840337'
+              userName: 
+                type: string
+                example: user@miro.com
+              name: 
+                type: object
+                properties: 
+                  familyName: 
+                    type: string
+                    example: Doe
+                  givenName: 
+                    type: string
+                    example: John
+              displayName: 
+                type: string
+                example: John Doe
+              userType: 
+                type: string
+                example: Full
+              active: 
+                type: boolean
+              emails: 
+                type: array
+                items: 
+                  type: object
+                  properties: 
+                    value: 
+                      type: string
+                      example: user@miro.com
+                    display: 
+                      type: string
+                      example: user@miro.com
+                    primary: 
+                      type: boolean
+              photos: 
+                type: array
+                items: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                      example: photo
+              groups: 
+                type: array
+                items: 
+                  type: object
+                  properties: 
+                    value: 
+                      type: string
+                      example: '3074457364331875019'
+                    display: 
+                      type: string
+                      example: Product
+              roles: 
+                type: array
+                items: 
+                  type: object
+                  properties: 
+                    value: 
+                      type: string
+                      example: ORGANIZATION_INTERNAL_ADMIN
+                    display: 
+                      type: string
+                      example: Company Admin
+                    type: 
+                      type: string
+                      example: organization_user_role
+                    primary: 
+                      type: boolean
+              meta: 
+                type: object
+                properties: 
+                  resourceType: 
+                    type: string
+                    example: User
+                  location: 
+                    type: string
+                    example: http://api-nola:9111/api/v1/scim/Users/3074457364371840337
+    PatchGroupResource:
+      type: object
+      required:
+        - schemas
+        - Operations
+        - op
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+        Operations: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              op: 
+                type: string
+                enum:
+                  - Add
+                  - Remove
+                  - Replace
+              path: 
+                type: string
+              value: 
+                type: array
+                items: 
+                  type: object
+                  properties: 
+                    value: 
+                      type: string
+    GroupResource: 
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:schemas:core:2.0:Group
+        id: 
+          type: string
+          example: '3074457365836251622'
+        meta: 
+          type: object
+          properties: 
+            resourceType: 
+              type: string
+              example: Group
+            location: 
+              type: string
+              example: http://api-xochitl:9111/api/v1/scim/Groups/3074457365836251622
+        displayName: 
+          type: string
+          example: Product
+        members: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              value: 
+                type: string
+                example: '3074457365265951581'
+              type: 
+                type: string
+                example: User
+              display: 
+                type: string
+                example: John Doe
+    GroupListResponse: 
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:api:messages:2.0:ListResponse
+        totalResults: 
+          type: number
+          example: 4
+        Resources: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              schemas: 
+                type: array
+                items: 
+                  type: string
+                  example: urn:ietf:params:scim:schemas:core:2.0:Group
+              id: 
+                type: string
+                example: '3074457365836251622'
+              displayName: 
+                type: string
+                example: Product
+              members: 
+                type: array
+                items: 
+                  type: object
+                  properties: 
+                    value: 
+                      type: string
+                      example: '3074457365265951581'
+                    type: 
+                      type: string
+                      example: User
+                    display: 
+                      type: string
+                      example: User One
+              meta: 
+                type: object
+                properties: 
+                  resourceType: 
+                    type: string
+                    example: Group
+                  location: 
+                    type: string
+                    example: http://api-synai:9111/api/v1/scim/Groups/3074457365836251622
+      description: list of groups (teams)
+    ErrorResponse:
+      required:
+      - status
+      type: object
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+            example: urn:ietf:params:scim:api:messages:2.0:Error
+        status:
+          type: string
+          description: HTTP status code as string
+          example: 400
+        scimType:
+          type: string
+          description: property name or keyword associated with the error
+          example: invalidFilter
+        detail:
+          type: string
+          description: A detailed human-readable message of the error
+          example: Unexpected end of filter string
+      description: information about the response error
+    ServiceProviderConfigResponse:
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
+        documentationUri: 
+          type: string
+          example: https://developers.miro.com/docs/scim
+        patch: 
+          type: object
+          properties: 
+            supported: 
+              type: boolean
+              example: true
+        bulk: 
+          type: object
+          properties: 
+            supported: 
+              type: boolean
+              example: false
+            maxOperations: 
+              type: number
+              example: 0
+            maxPayloadSize: 
+              type: number
+              example: 0
+        filter: 
+          type: object
+          properties: 
+            supported: 
+              type: boolean
+              example: true
+            maxResults: 
+              type: number
+              example: 99999
+        changePassword: 
+          type: object
+          properties: 
+            supported: 
+              type: boolean
+              example: false
+        sort: 
+          type: object
+          properties: 
+            supported: 
+              type: boolean
+              example: true
+        etag: 
+          type: object
+          properties: 
+            supported: 
+              type: boolean
+              example: true
+        authenticationSchemes: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              name: 
+                type: string
+                example: OAuth 2.0 Bearer Token
+              description: 
+                type: string
+                example: The OAuth 2.0 Bearer Token Authentication scheme. OAuth enables clients to access protected resources by obtaining an access token which is defined in RFC 6750 as a string representing an access authorization issued to the client rather than using the resource owner's credentials directly.
+              specUri: 
+                type: string
+                example: http://tools.ietf.org/html/rfc6750
+              type: 
+                type: string
+                example: oauthbearertoken
+              primary: 
+                type: boolean
+                example: true
+      description: supported operations and SCIM API basic configuration
+    ResourceTypeListResponse: 
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:api:messages:2.0:ListResponse
+        totalResults: 
+          type: number
+          example: 2
+        Resources: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              schemas: 
+                type: array
+                items: 
+                  type: string
+                  example: urn:ietf:params:scim:schemas:core:2.0:ResourceType
+              id: 
+                type: string
+                example: User
+              name: 
+                type: string
+                example: User
+              description: 
+                type: string
+                example: User
+              endpoint: 
+                type: string
+                example: /Users
+              schema: 
+                type: string
+                example: urn:ietf:params:scim:schemas:core:2.0:User
+              schemaExtensions: 
+                type: array
+                items: 
+                  type: object
+                  properties: 
+                    schema: 
+                      type: string
+                      example: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User
+                    required: 
+                      type: boolean
+                      example: false
+      description: information about which resources are supported. Currently, we support Users and Groups
+    ResourceType: 
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:schemas:core:2.0:ResourceType
+        id: 
+          type: string
+          example: User
+        name: 
+          type: string
+          example: User
+        description: 
+          type: string
+          example: User
+        endpoint: 
+          type: string
+          example: /Users
+        schema: 
+          type: string
+          example: urn:ietf:params:scim:schemas:core:2.0:User
+        schemaExtensions: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              schema: 
+                type: string
+                example: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User
+              required: 
+                type: boolean
+                example: false
+      description: metadata for the available resource types (User and Group)
+    SchemaListResponse:
+      type: object
+      properties: 
+        schemas: 
+          type: array
+          items: 
+            type: string
+            example: urn:ietf:params:scim:api:messages:2.0:ListResponse
+        totalResults: 
+          type: number
+          example: 3
+        Resources: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              schemas: 
+                type: array
+                items: 
+                  type: string
+                  example: urn:ietf:params:scim:schemas:core:2.0:Schema
+              id: 
+                type: string
+                example: urn:ietf:params:scim:schemas:core:2.0:User
+              name: 
+                type: string
+                example: User
+              description: 
+                type: string
+                example: User Account
+              attributes: 
+                type: array
+                items: 
+                  type: object
+                  properties: 
+                    name: 
+                      type: string
+                      example: userName
+                    type: 
+                      type: string
+                      example: string
+                    multiValued: 
+                      type: boolean
+                      example: false
+                    description: 
+                      type: string
+                      example: Unique identifier for the User typically used by the user to directly authenticate to the service provider. Each User MUST include a non-empty userName value. This identifier MUST be unique across the service provider's entire set of Users.
+                    required: 
+                      type: boolean
+                      example: true
+                    caseExact: 
+                      type: boolean
+                      example: false
+                    mutability: 
+                      type: string
+                      example: readWrite
+                    returned: 
+                      type: string
+                      example: default
+                    uniqueness: 
+                      type: string
+                      example: server
+              meta: 
+                type: object
+                properties: 
+                  resourceType: 
+                    type: string
+                    example: Schema
+                  location: 
+                    type: string
+                    example: https://miro.com/api/v1/scim/Schemas/urn:ietf:params:scim:schemas:core:2.0:User
+      description: metadata about Users, Groups and extension attributes that are currently supported
+    SchemaAttribute:  
+      type: object
+      properties: 
+        name: 
+          type: string
+          example: userName
+        type: 
+          type: string
+          example: string
+        multiValued: 
+          type: boolean
+          example: false
+        description: 
+          type: string
+          example: Unique identifier for the User typically used by the user to directly authenticate to the service provider. Each User MUST include a non-empty userName value. This identifier MUST be unique across the service provider's entire set of Users.
+        required: 
+          type: boolean
+          example: true
+        subAttributes: 
+          $ref: '#/components/schemas/SchemaAttribute'
+        caseExact: 
+          type: boolean
+          example: false
+        mutability: 
+          type: string
+          example: readWrite
+        returned: 
+          type: string
+          example: default
+        uniqueness: 
+          type: string
+          example: server
+      description: recursive definition of schema attributes
+    SchemaResource: 
+      type: object
+      properties: 
+        id: 
+          type: string
+          example: urn:ietf:params:scim:schemas:core:2.0:User
+        name: 
+          type: string
+          example: User
+        description: 
+          type: string
+          example: User Account
+        attributes: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/SchemaAttribute'
+        meta: 
+          type: object
+          properties: 
+            resourceType: 
+              type: string
+              example: Schema
+            location: 
+              type: string
+              example: https://miro.com/api/v1/scim/Schemas/urn:ietf:params:scim:schemas:core:2.0:User
+      description: information on how users, groups, and enterprise-user attributes are formatted
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+- bearerAuth: []
