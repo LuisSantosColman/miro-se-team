@@ -9,7 +9,7 @@ paths:
   /Users:
     get:
       tags:
-      - user
+        - user
       description: 'Retrieves the list of users in your organization. <br><b>Note</b>: Users with role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" are not retrieved in this request'
       parameters:
         - name: attributes
@@ -76,7 +76,7 @@ paths:
           description: Internal Server Error
     post:
       tags:
-      - user
+        - user
       description: 'Creates a new user. Payload must include the "userName" attribute populated with an email address, "familyName", and "givenName" or a "displayName" attribute. If "displayName" is not populated, a combination of "givenName" and "familyName" is used'
       requestBody:
         description: 'Payload must include the "userName" attribute populated with an email address, "familyName", and "givenName" or a "displayName" attribute. If "displayName" is not populated, a combination of "givenName" and "familyName" is used'
@@ -113,7 +113,7 @@ paths:
   /Users/{id}:
     get:
       tags:
-      - user
+        - user
       description: 'Retrieves a single user resource. <br><b>Note</b>: Users with role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" are not retrieved in this request and the API will return a 404 error for those users'
       parameters:
         - name: id
@@ -153,7 +153,7 @@ paths:
           description: Internal Server Error
     put:
       tags:
-      - user
+        - user
       description: 'Updates an existing user resource. It is the easiest way to replace the user information'
       parameters:
         - name: id
@@ -196,7 +196,7 @@ paths:
           description: Internal Server Error
     patch:
       tags:
-      - user
+        - user
       description: 'Updates an existing user resource, overwriting values for specified attributes. Attributes that are not provided will remain unchanged. PATCH only updates the fields provided'
       parameters:
         - name: id
@@ -239,7 +239,7 @@ paths:
           description: Internal Server Error
     delete:
       tags:
-      - user
+        - user
       description: 'Deletes a single user from the organization.<br><br>A user who is the last admin in the team or the last admin in the organization cannot be deleted. If you try to delete such user, the API returns a 409 error code.<br><br>Users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" cannot be deleted, in suh case the API returns a 404 error code<br><br>All user boards that used to be owned by the deleted user get assigned to first team admin or first company admin from the organization.<br><br>The response body is empty'
       parameters:
         - name: id
@@ -272,7 +272,7 @@ paths:
   /Groups:
     get:
       tags:
-      - group
+        - group
       description: 'Retrieves a list of groups (teams).<br><b>Note</b>: Users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" are not retrieved for any account'
       parameters:
         - name: attributes
@@ -340,7 +340,7 @@ paths:
   /Groups/{id}:
     get:
       tags:
-      - group
+        - group
       description: 'Retrieves a single Group resource. <br><b>Note</b>: Users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" are not retrieved for any account'
       parameters:
         - name: id
@@ -384,7 +384,7 @@ paths:
           description: Internal Server Error
     patch:
       tags:
-      - group
+        - group
       description: 'Updates an existing group resource, overwriting values for specified attributes. Attributes that are not provided will remain unchanged. PATCH only updates the fields provided. <br><br>The body of a PATCH request must contain the attribute "Operations", whose value is an array of one or more PATCH operations. Each PATCH operation object must have exactly one "op" member. To update a user resource, use the "replace" operation. <br><br>The "path" attribute value is a string containing an attribute path describing the target of the operation. The "path" attribute is optional for the "add" and "replace" operations and is required for the "remove" operation.<br><br><b>Note</b>: replacing the "displayName" of a group will only update the "security group" name and not the actual name of the group/team that is visible in the Miro User Interface. More information regarding this specific operation is available at: https://developers.miro.com/docs/scim-groups#decoupling-groups-and-teams<br><br>For "remove" or "replace" operations, the team member is removed from the team and from all team boards. If the user is not registered fully in Miro and is not assigned to any other team, the user is also removed from the organization<br><br>All added team members are reactivated or recreated if they were deactivated or deleted earlier.<br><br>When adding existing users with the role "ORGANIZATION_EXTERNAL_USER" or "ORGANIZATION_TEAM_GUEST_USER" to a team, Miro sets "FULL" license and "ORGANIZATION_INTERNAL_USER" roles.'
       parameters:
         - name: id
@@ -407,7 +407,7 @@ paths:
               $ref: '#/components/schemas/PatchGroupResource'
             example:
               schemas: ['urn:ietf:params:scim:api:messages:2.0:PatchOp']
-              Operations: 
+              Operations:
                 - op: Add
                   path: members
                   value:
@@ -447,7 +447,7 @@ paths:
   /ServiceProviderConfig:
     get:
       tags:
-      - discovery
+        - discovery
       description: returns supported operations and SCIM API basic configuration
       responses:
         200:
@@ -469,7 +469,7 @@ paths:
   /ResourceTypes:
     get:
       tags:
-      - discovery
+        - discovery
       description: returns information about which resources are supported. Currently, Miro supports Users and Groups
       responses:
         200:
@@ -491,17 +491,17 @@ paths:
   /ResourceTypes/{resource}:
     get:
       tags:
-      - discovery
+        - discovery
       description: returns metadata for the available resource types (User and Group)
       parameters:
-      - name: resource
-        in: path
-        required: true
-        schema:
-          type: string
-          enum:
-          - User
-          - Group
+        - name: resource
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - User
+              - Group
       responses:
         200:
           description: Successful Operation
@@ -522,7 +522,7 @@ paths:
   /Schemas:
     get:
       tags:
-      - discovery
+        - discovery
       description: returns metadata about Users, Groups and extension attributes that are currently supported
       responses:
         200:
@@ -544,19 +544,19 @@ paths:
   /Schemas/{uri}:
     get:
       tags:
-      - discovery
+        - discovery
       description: returns information on how users, groups, and enterprise-user attributes are formatted
       parameters:
-      - name: uri
-        in: path
-        description: Schema URI of a particular resource type
-        required: true
-        schema:
-          type: string
-          enum:
-          - urn:ietf:params:scim:schemas:core:2.0:User
-          - urn:ietf:params:scim:schemas:core:2.0:Group
-          - urn:ietf:params:scim:schemas:extension:enterprise:2.0:User
+        - name: uri
+          in: path
+          description: Schema URI of a particular resource type
+          required: true
+          schema:
+            type: string
+            enum:
+              - urn:ietf:params:scim:schemas:core:2.0:User
+              - urn:ietf:params:scim:schemas:core:2.0:Group
+              - urn:ietf:params:scim:schemas:extension:enterprise:2.0:User
       responses:
         200:
           description: Successful Operation
@@ -574,115 +574,121 @@ paths:
           description: Not Found
         500:
           description: Internal Server Error
-components: 
+components:
   schemas:
-    PatchUserResource: 
+    PatchUserResource:
       type: object
       required:
         - schemas
         - Operations
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:api:messages:2.0:PatchOp
-        Operations: 
+        Operations:
           type: array
-          items: 
+          items:
             type: object
             required:
               - op
               - path
               - value
-            properties: 
-              op: 
+            properties:
+              op:
                 type: string
                 enum:
                   - Replace
                 example: Replace
-              path: 
+              path:
                 type: string
                 example: userType
-              value: 
+              value:
                 type: string
                 example: Full
-    CreateUserResponse: 
+    CreateUserResponse:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:schemas:core:2.0:User
-        id: 
+        id:
           type: string
           example: '3074457365860294626'
-        meta: 
+        meta:
           type: object
-          properties: 
-            resourceType: 
+          properties:
+            resourceType:
               type: string
               example: User
-            location: 
+            location:
               type: string
               example: http://api-aella:9111/api/v1/scim/Users/3074457365860294626
-        userName: 
+        userName:
           type: string
           example: user@miro.com
-        name: 
+        name:
           type: object
-          properties: 
-            familyName: 
+          properties:
+            formatted:
+              type: string
+              example: Adam Taylor
+            familyName:
               type: string
               example: Taylor
-            givenName: 
+            givenName:
               type: string
               example: Adam
-        displayName: 
+        displayName:
           type: string
           example: Adam Taylor
-        userType: 
+        userType:
           type: string
           example: Free
-        active: 
+        active:
           type: boolean
-        emails: 
+        emails:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              value: 
+            properties:
+              value:
                 type: string
                 example: user@miro.com
-              display: 
+              display:
                 type: string
                 example: user@miro.com
-              primary: 
+              primary:
                 type: boolean
-        photos: 
+        photos:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              type: 
+            properties:
+              type:
                 type: string
                 example: photo
-        roles: 
+              value:
+                type: string
+                example: https://someHost.com/path_to_image.jpg
+        roles:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              value: 
+            properties:
+              value:
                 type: string
                 example: ORGANIZATION_INTERNAL_USER
-              display: 
+              display:
                 type: string
                 example: Member
-              type: 
+              type:
                 type: string
                 example: organization_user_role
-              primary: 
+              primary:
                 type: boolean
                 example: true
     CreateUserResource:
@@ -691,235 +697,256 @@ components:
         - schemas
         - userName
         - name
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:schemas:core:2.0:User
-        userName: 
+        userName:
           type: string
           example: user@miro.com
-        name: 
+        name:
           type: object
           required:
             - familyName
             - givenName
-          properties: 
-            familyName: 
+          properties:
+            formatted:
+              type: string
+              example: Adam Taylor
+            familyName:
               type: string
               example: Doe
-            givenName: 
+            givenName:
               type: string
               example: John
-        displayName: 
+        displayName:
           type: string
           example: John Doe
     UserResource:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:schemas:core:2.0:User
-        id: 
+        id:
           type: string
           example: '3074457365265951581'
-        meta: 
+        meta:
           type: object
-          properties: 
-            resourceType: 
+          properties:
+            resourceType:
               type: string
               example: User
-            location: 
+            location:
               type: string
               example: http://api-hailey:9111/api/v1/scim/Users/3074457365265951581
-        userName: 
+        userName:
           type: string
           example: user@miro.com
-        name: 
+        name:
           type: object
-          properties: 
-            familyName: 
+          properties:
+            formatted:
+              type: string
+              example: Adam Taylor
+            familyName:
               type: string
               example: Doe
-            givenName: 
+            givenName:
               type: string
               example: John
-        displayName: 
+        displayName:
           type: string
           example: John Doe
-        userType: 
+        userType:
           type: string
           example: Full
-        active: 
+        active:
           type: boolean
-        emails: 
+        emails:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              value: 
+            properties:
+              value:
                 type: string
                 example: user@miro.com
-              display: 
+              display:
                 type: string
                 example: user@miro.com
-              primary: 
+              primary:
                 type: boolean
-        photos: 
+        photos:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              type: 
+            properties:
+              type:
                 type: string
                 example: photo
-        groups: 
+              value:
+                type: string
+                example: https://someHost.com/path_to_image.jpg
+        groups:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              value: 
+            properties:
+              value:
                 type: string
                 example: '3074457365266112911'
-              display: 
+              display:
                 type: string
                 example: Product
-        roles: 
+        roles:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              value: 
+            properties:
+              value:
                 type: string
                 example: ORGANIZATION_INTERNAL_USER
-              display: 
+              display:
                 type: string
                 example: Member
-              type: 
+              type:
                 type: string
                 example: organization_user_role
-              primary: 
+              primary:
                 type: boolean
-        urn:ietf:params:scim:schemas:extension:enterprise:2.0:User: 
+        urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:
           type: object
-          properties: 
-            employeeNumber: 
+          properties:
+            employeeNumber:
               type: string
               example: 701984
-            costCenter: 
+            costCenter:
               type: string
               example: 4130
-            organization: 
+            organization:
               type: string
               example: Miro Inc.
-            division: 
+            division:
               type: string
               example: Product
-            department: 
+            department:
               type: string
               example: Security
+            manager:
+              type: object
+              properties:
+                value:
+                  type: number
+                  example: 3455467465444
     UserListResponse:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:api:messages:2.0:ListResponse
-        totalResults: 
+        totalResults:
           type: number
           example: 11
-        Resources: 
+        Resources:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              schemas: 
+            properties:
+              schemas:
                 type: array
-                items: 
+                items:
                   type: string
                   example: urn:ietf:params:scim:schemas:core:2.0:User
-              id: 
+              id:
                 type: string
                 example: '3074457364371840337'
-              userName: 
+              userName:
                 type: string
                 example: user@miro.com
-              name: 
+              name:
                 type: object
-                properties: 
-                  familyName: 
+                properties:
+                  formatted:
+                    type: string
+                    example: Adam Taylor
+                  familyName:
                     type: string
                     example: Doe
-                  givenName: 
+                  givenName:
                     type: string
                     example: John
-              displayName: 
+              displayName:
                 type: string
                 example: John Doe
-              userType: 
+              userType:
                 type: string
                 example: Full
-              active: 
+              active:
                 type: boolean
-              emails: 
+              emails:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    value: 
+                  properties:
+                    value:
                       type: string
                       example: user@miro.com
-                    display: 
+                    display:
                       type: string
                       example: user@miro.com
-                    primary: 
+                    primary:
                       type: boolean
-              photos: 
+              photos:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    type: 
+                  properties:
+                    type:
                       type: string
                       example: photo
-              groups: 
+                    value:
+                      type: string
+                      example: https://someHost.com/path_to_image.jpg
+              groups:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    value: 
+                  properties:
+                    value:
                       type: string
                       example: '3074457364331875019'
-                    display: 
+                    display:
                       type: string
                       example: Product
-              roles: 
+              roles:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    value: 
+                  properties:
+                    value:
                       type: string
                       example: ORGANIZATION_INTERNAL_ADMIN
-                    display: 
+                    display:
                       type: string
                       example: Company Admin
-                    type: 
+                    type:
                       type: string
                       example: organization_user_role
-                    primary: 
+                    primary:
                       type: boolean
-              meta: 
+              meta:
                 type: object
-                properties: 
-                  resourceType: 
+                properties:
+                  resourceType:
                     type: string
                     example: User
-                  location: 
+                  location:
                     type: string
                     example: http://api-nola:9111/api/v1/scim/Users/3074457364371840337
     PatchGroupResource:
@@ -928,122 +955,122 @@ components:
         - schemas
         - Operations
         - op
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
-        Operations: 
+        Operations:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              op: 
+            properties:
+              op:
                 type: string
                 enum:
                   - Add
                   - Remove
                   - Replace
-              path: 
+              path:
                 type: string
-              value: 
+              value:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    value: 
+                  properties:
+                    value:
                       type: string
-    GroupResource: 
+    GroupResource:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:schemas:core:2.0:Group
-        id: 
+        id:
           type: string
           example: '3074457365836251622'
-        meta: 
+        meta:
           type: object
-          properties: 
-            resourceType: 
+          properties:
+            resourceType:
               type: string
               example: Group
-            location: 
+            location:
               type: string
               example: http://api-xochitl:9111/api/v1/scim/Groups/3074457365836251622
-        displayName: 
+        displayName:
           type: string
           example: Product
-        members: 
+        members:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              value: 
+            properties:
+              value:
                 type: string
                 example: '3074457365265951581'
-              type: 
+              type:
                 type: string
                 example: User
-              display: 
+              display:
                 type: string
                 example: John Doe
-    GroupListResponse: 
+    GroupListResponse:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:api:messages:2.0:ListResponse
-        totalResults: 
+        totalResults:
           type: number
           example: 4
-        Resources: 
+        Resources:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              schemas: 
+            properties:
+              schemas:
                 type: array
-                items: 
+                items:
                   type: string
                   example: urn:ietf:params:scim:schemas:core:2.0:Group
-              id: 
+              id:
                 type: string
                 example: '3074457365836251622'
-              displayName: 
+              displayName:
                 type: string
                 example: Product
-              members: 
+              members:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    value: 
+                  properties:
+                    value:
                       type: string
                       example: '3074457365265951581'
-                    type: 
+                    type:
                       type: string
                       example: User
-                    display: 
+                    display:
                       type: string
                       example: User One
-              meta: 
+              meta:
                 type: object
-                properties: 
-                  resourceType: 
+                properties:
+                  resourceType:
                     type: string
                     example: Group
-                  location: 
+                  location:
                     type: string
                     example: http://api-synai:9111/api/v1/scim/Groups/3074457365836251622
       description: list of groups (teams)
     ErrorResponse:
       required:
-      - status
+        - status
       type: object
       properties:
         schemas:
@@ -1066,292 +1093,292 @@ components:
       description: information about the response error
     ServiceProviderConfigResponse:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
-        documentationUri: 
+        documentationUri:
           type: string
           example: https://developers.miro.com/docs/scim
-        patch: 
+        patch:
           type: object
-          properties: 
-            supported: 
+          properties:
+            supported:
               type: boolean
               example: true
-        bulk: 
+        bulk:
           type: object
-          properties: 
-            supported: 
+          properties:
+            supported:
               type: boolean
               example: false
-            maxOperations: 
+            maxOperations:
               type: number
               example: 0
-            maxPayloadSize: 
+            maxPayloadSize:
               type: number
               example: 0
-        filter: 
+        filter:
           type: object
-          properties: 
-            supported: 
+          properties:
+            supported:
               type: boolean
               example: true
-            maxResults: 
+            maxResults:
               type: number
               example: 99999
-        changePassword: 
+        changePassword:
           type: object
-          properties: 
-            supported: 
+          properties:
+            supported:
               type: boolean
               example: false
-        sort: 
+        sort:
           type: object
-          properties: 
-            supported: 
+          properties:
+            supported:
               type: boolean
               example: true
-        etag: 
+        etag:
           type: object
-          properties: 
-            supported: 
+          properties:
+            supported:
               type: boolean
               example: true
-        authenticationSchemes: 
+        authenticationSchemes:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              name: 
+            properties:
+              name:
                 type: string
                 example: OAuth 2.0 Bearer Token
-              description: 
+              description:
                 type: string
                 example: The OAuth 2.0 Bearer Token Authentication scheme. OAuth enables clients to access protected resources by obtaining an access token which is defined in RFC 6750 as a string representing an access authorization issued to the client rather than using the resource owner's credentials directly.
-              specUri: 
+              specUri:
                 type: string
                 example: http://tools.ietf.org/html/rfc6750
-              type: 
+              type:
                 type: string
                 example: oauthbearertoken
-              primary: 
+              primary:
                 type: boolean
                 example: true
       description: supported operations and SCIM API basic configuration
-    ResourceTypeListResponse: 
+    ResourceTypeListResponse:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:api:messages:2.0:ListResponse
-        totalResults: 
+        totalResults:
           type: number
           example: 2
-        Resources: 
+        Resources:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              schemas: 
+            properties:
+              schemas:
                 type: array
-                items: 
+                items:
                   type: string
                   example: urn:ietf:params:scim:schemas:core:2.0:ResourceType
-              id: 
+              id:
                 type: string
                 example: User
-              name: 
+              name:
                 type: string
                 example: User
-              description: 
+              description:
                 type: string
                 example: User
-              endpoint: 
+              endpoint:
                 type: string
                 example: /Users
-              schema: 
+              schema:
                 type: string
                 example: urn:ietf:params:scim:schemas:core:2.0:User
-              schemaExtensions: 
+              schemaExtensions:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    schema: 
+                  properties:
+                    schema:
                       type: string
                       example: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User
-                    required: 
+                    required:
                       type: boolean
                       example: false
       description: information about which resources are supported. Currently, we support Users and Groups
-    ResourceType: 
+    ResourceType:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:schemas:core:2.0:ResourceType
-        id: 
+        id:
           type: string
           example: User
-        name: 
+        name:
           type: string
           example: User
-        description: 
+        description:
           type: string
           example: User
-        endpoint: 
+        endpoint:
           type: string
           example: /Users
-        schema: 
+        schema:
           type: string
           example: urn:ietf:params:scim:schemas:core:2.0:User
-        schemaExtensions: 
+        schemaExtensions:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              schema: 
+            properties:
+              schema:
                 type: string
                 example: urn:ietf:params:scim:schemas:extension:enterprise:2.0:User
-              required: 
+              required:
                 type: boolean
                 example: false
       description: metadata for the available resource types (User and Group)
     SchemaListResponse:
       type: object
-      properties: 
-        schemas: 
+      properties:
+        schemas:
           type: array
-          items: 
+          items:
             type: string
             example: urn:ietf:params:scim:api:messages:2.0:ListResponse
-        totalResults: 
+        totalResults:
           type: number
           example: 3
-        Resources: 
+        Resources:
           type: array
-          items: 
+          items:
             type: object
-            properties: 
-              schemas: 
+            properties:
+              schemas:
                 type: array
-                items: 
+                items:
                   type: string
                   example: urn:ietf:params:scim:schemas:core:2.0:Schema
-              id: 
+              id:
                 type: string
                 example: urn:ietf:params:scim:schemas:core:2.0:User
-              name: 
+              name:
                 type: string
                 example: User
-              description: 
+              description:
                 type: string
                 example: User Account
-              attributes: 
+              attributes:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    name: 
+                  properties:
+                    name:
                       type: string
                       example: userName
-                    type: 
+                    type:
                       type: string
                       example: string
-                    multiValued: 
+                    multiValued:
                       type: boolean
                       example: false
-                    description: 
+                    description:
                       type: string
                       example: Unique identifier for the User typically used by the user to directly authenticate to the service provider. Each User MUST include a non-empty userName value. This identifier MUST be unique across the service provider's entire set of Users.
-                    required: 
+                    required:
                       type: boolean
                       example: true
-                    caseExact: 
+                    caseExact:
                       type: boolean
                       example: false
-                    mutability: 
+                    mutability:
                       type: string
                       example: readWrite
-                    returned: 
+                    returned:
                       type: string
                       example: default
-                    uniqueness: 
+                    uniqueness:
                       type: string
                       example: server
-              meta: 
+              meta:
                 type: object
-                properties: 
-                  resourceType: 
+                properties:
+                  resourceType:
                     type: string
                     example: Schema
-                  location: 
+                  location:
                     type: string
                     example: https://miro.com/api/v1/scim/Schemas/urn:ietf:params:scim:schemas:core:2.0:User
       description: metadata about Users, Groups and extension attributes that are currently supported
-    SchemaAttribute:  
+    SchemaAttribute:
       type: object
-      properties: 
-        name: 
+      properties:
+        name:
           type: string
           example: userName
-        type: 
+        type:
           type: string
           example: string
-        multiValued: 
+        multiValued:
           type: boolean
           example: false
-        description: 
+        description:
           type: string
           example: Unique identifier for the User typically used by the user to directly authenticate to the service provider. Each User MUST include a non-empty userName value. This identifier MUST be unique across the service provider's entire set of Users.
-        required: 
+        required:
           type: boolean
           example: true
-        subAttributes: 
+        subAttributes:
           $ref: '#/components/schemas/SchemaAttribute'
-        caseExact: 
+        caseExact:
           type: boolean
           example: false
-        mutability: 
+        mutability:
           type: string
           example: readWrite
-        returned: 
+        returned:
           type: string
           example: default
-        uniqueness: 
+        uniqueness:
           type: string
           example: server
       description: recursive definition of schema attributes
-    SchemaResource: 
+    SchemaResource:
       type: object
-      properties: 
-        id: 
+      properties:
+        id:
           type: string
           example: urn:ietf:params:scim:schemas:core:2.0:User
-        name: 
+        name:
           type: string
           example: User
-        description: 
+        description:
           type: string
           example: User Account
-        attributes: 
+        attributes:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/SchemaAttribute'
-        meta: 
+        meta:
           type: object
-          properties: 
-            resourceType: 
+          properties:
+            resourceType:
               type: string
               example: Schema
-            location: 
+            location:
               type: string
               example: https://miro.com/api/v1/scim/Schemas/urn:ietf:params:scim:schemas:core:2.0:User
       description: information on how users, groups, and enterprise-user attributes are formatted
@@ -1360,4 +1387,4 @@ components:
       type: http
       scheme: bearer
 security:
-- bearerAuth: []
+  - bearerAuth: []
