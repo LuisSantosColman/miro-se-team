@@ -629,7 +629,7 @@ components:
               example: http://api-aella:9111/api/v1/scim/Users/3074457365860294626
         userName: 
           type: string
-          example: test7@miro.com
+          example: user@miro.com
         name: 
           type: object
           properties: 
@@ -654,10 +654,10 @@ components:
             properties: 
               value: 
                 type: string
-                example: test7@miro.com
+                example: user@miro.com
               display: 
                 type: string
-                example: test7@miro.com
+                example: user@miro.com
               primary: 
                 type: boolean
         photos: 
@@ -699,7 +699,7 @@ components:
             example: urn:ietf:params:scim:schemas:core:2.0:User
         userName: 
           type: string
-          example: test@miro.com
+          example: user@miro.com
         name: 
           type: object
           required:
