@@ -48,6 +48,9 @@ paths:
           description: defines the order in which the 'sortBy' parameter is applied. Allowed values are 'ascending' and 'descending'. Example sortOrder=ascending
           schema:
             type: string
+            enum:
+              - ascending
+              - descending
       responses:
         200:
           description: Successful Operation
@@ -308,6 +311,9 @@ paths:
           description: defines the order in which the 'sortBy' parameter is applied. Allowed values are 'ascending' and 'descending'. Example sortOrder=ascending
           schema:
             type: string
+            enum:
+              - ascending
+              - descending
       responses:
         200:
           description: Successful Operation
