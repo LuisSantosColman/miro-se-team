@@ -852,7 +852,7 @@ components:
             example: urn:ietf:params:scim:api:messages:2.0:ListResponse
         totalResults:
           type: number
-          example: 11
+          example: 12
         Resources:
           type: array
           items:
